@@ -16,8 +16,15 @@ mongoose.connect('mongodb://0.0.0.0:27017/farmStand')
 app.set('views', path.join(__dirname, 'views')); //for absolute path
 app.set('view engine', 'ejs'); //told express to use EJS
 
-app.get('/dog', (req, res) => {
-    res.send('WOOF!');
+app.get('/products', async (req, res) => {
+    const products = await Product.find({});
+    res.render('products/index', { products });
+})
+
+app.get('/products/:id', async (req, res) => {
+    const id = req.params;
+    const product = await Product.findById(id);
+    res.render('products/show', { product });
 })
 
 app.listen(5000, () => {
