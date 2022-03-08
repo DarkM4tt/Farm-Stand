@@ -15,10 +15,21 @@ mongoose.connect('mongodb://0.0.0.0:27017/farmStand')
 
 app.set('views', path.join(__dirname, 'views')); //for absolute path
 app.set('view engine', 'ejs'); //told express to use EJS
+app.use(express.urlencoded({extended: true}))
 
 app.get('/products', async (req, res) => {
     const products = await Product.find({});
     res.render('products/index', { products });
+})
+
+app.get('/products/new', (erq, res) => {
+    res.render('products/new');
+})
+
+app.post('/products', async (req, res) => {  //where new form submits
+    const newProduct = new Product(req.body);
+    await newProduct.save();
+    res.redirect(`/products/${newProduct._id}`);
 })
 
 app.get('/products/:id', async (req, res) => {
