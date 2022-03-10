@@ -62,7 +62,7 @@ app.put('/products/:id', async (req, res) => { //to update value in database
     res.redirect(`/products/${product._id}`);
 })
 
-app.delete('/products/:id', async (req, res) => {
+app.delete('/products/:id', async (req, res) => { //method override route to delete a product
     const { id } = req.params;
     const deleteProduct = await Product.findByIdAndDelete(id);
     res.redirect('/products');
