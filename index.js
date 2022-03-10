@@ -3,7 +3,7 @@ const app = express();
 const path = require('path');
 const mongoose = require('mongoose');
 const Product = require('./models/product');
-//const methodOverride = require('method-override');
+const methodOverride = require('method-override');
 
 mongoose.connect('mongodb://0.0.0.0:27017/farmStand')
     .then(() => {
@@ -19,7 +19,9 @@ app.set('view engine', 'ejs'); //tell app to use ejs
 
 //app.use = running some code(function) on every single type of request
 app.use(express.urlencoded({extended: true}));  // tell express how to parse request(a body parser)
-//app.use(methodOverride('_method'));
+app.use(methodOverride('_method'));
+
+const categories = ['fruit', 'dairy', 'vegetable', 'fungi'];
 
 app.get('/products', async (req, res) => {
     const { category } = req.query;
@@ -33,7 +35,7 @@ app.get('/products', async (req, res) => {
 })
 
 app.get('/products/new', (req, res) => {
-    res.render('products/new');
+    res.render('products/new', { categories });
 })
 
 app.post('/products', async (req, res) => {  //where new form Submits
@@ -51,10 +53,10 @@ app.get('/products/:id', async (req, res) => {
 app.get('/products/:id/edit', async (req, res) => {
     const { id } = req.params;
     const product = await Product.findById(id);
-    res.render('products/edit', { product });
+    res.render('products/edit', { product, categories });
 })
 
-app.put('/products/:id', async (req, res) => {
+app.put('/products/:id', async (req, res) => { //to update value in database
     const { id } = req.params;
     const product = await Product.findByIdAndUpdate(id, req.body, {runValidators: true, new: true});
     res.redirect(`/products/${product._id}`);
